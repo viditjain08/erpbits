@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+
 class slot(models.Model):
 
     course = models.CharField(max_length=10, unique=True)
@@ -20,6 +21,14 @@ class slot(models.Model):
         return u'%s %s' % (self.course, self.name)
 
 class Erpuser(AbstractUser):
-    bio = models.TextField(max_length=500, blank=True)
-    location = models.CharField(max_length=30, blank=True)
-    birth_date = models.DateField(null=True, blank=True)
+    semester = models.IntegerField(default=1)
+    bitsid = models.CharField(max_length=12, unique=True)
+    cgpa = models.DecimalField(null=True, blank=True, max_digits=4, decimal_places=2)
+    timetable = models.TextField(default='', blank=True)
+    record = models.TextField(default='', blank=True)
+    def save(self, **kwargs):
+        password1 = self.password
+        if self.pk is None:
+            self.set_password(password1)
+        super(Erpuser, self).save(**kwargs)
+
