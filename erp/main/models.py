@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth.hashers import is_password_usable
 
 class slot(models.Model):
 
@@ -28,7 +28,7 @@ class Erpuser(AbstractUser):
     record = models.TextField(default='', blank=True)
     def save(self, **kwargs):
         password1 = self.password
-        if self.pk is None:
+        if is_password_usable(password1) is False:
             self.set_password(password1)
         super(Erpuser, self).save(**kwargs)
 
