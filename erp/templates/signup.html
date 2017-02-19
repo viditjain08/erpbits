@@ -1,0 +1,50 @@
+<html>
+<head>
+    <title>SignUp</title>
+</head>
+
+<body>
+    <h1>SignUp</h1>
+
+    {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error(s) below.
+        </p>
+    {% endif %}
+
+    <form action="" method="post">
+        <div style="color: red">
+            {{ form.firstname.errors }}
+        </div>
+            <label for="id_firstname">First Name:</label>
+
+            {{ form.firstname }}
+
+        <div style="color: red">
+            {{ form.lastname.errors }}
+        </div>
+            <label for="id_lastname">Last Name:</label>
+
+            {{ form.lastname }}
+       <div style="color: red">
+            {{ form.bitsid.errors }}
+        </div>
+            <label for="id_bitsid">BitsID:</label>
+
+            {{ form.bitsid }}
+       <div style="color: red">
+            {{ form.sem.errors }}
+        </div>
+            <label for="id_sem">Semester:</label>
+
+            {{ form.sem }}
+
+
+
+
+        {% csrf_token %}
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
