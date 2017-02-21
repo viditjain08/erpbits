@@ -5,9 +5,13 @@
 
 <body>
     <h1>Login</h1>
-
+{% if status %}
+<p style="color: red;">
+{{status}}
+{% endif %}
     {% if form.errors %}
         <p style="color: red;">
+
             Please correct the error{{ form.errors|pluralize }} below.
         </p>
     {% endif %}

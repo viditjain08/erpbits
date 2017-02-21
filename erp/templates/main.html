@@ -5,6 +5,18 @@
 
 <body>
 Hello, {{ request.user.bitsid }}<br>
+
+{% if request.user.is_superuser %}
+Admin Menu<br>
+<ul>
+<li><a href='signup'>Student Registration</a></li>
+<li><a href='pr'>Priority Number allottment</a></li>
+
+</ul>
+{% endif %}
+<ul>
+<li><a href='prlist'>PR numbers</a></li>
+</ul>
 <a href="/logout/">Logout</a>
 </body>
 </html>
