@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^login/$', login),
     url(r'^home/$', home),
     url(r'^logout/$', logout),
-    url(r'^signup/$', adminsignup),
+    url(r'^adm/signup/$', adminsignup),
 ]

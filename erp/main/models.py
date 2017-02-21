@@ -26,6 +26,7 @@ class Erpuser(AbstractUser):
     cgpa = models.DecimalField(null=True, blank=True, max_digits=4, decimal_places=2)
     timetable = models.TextField(default='', blank=True)
     record = models.TextField(default='', blank=True)
+    pr = models.IntegerField(default=0)
     def save(self, **kwargs):
         password1 = self.password
         if is_password_usable(password1) is False:
