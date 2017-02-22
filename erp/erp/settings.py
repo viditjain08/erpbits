@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +24,7 @@ SECRET_KEY = '4e@qtqtmzffi1b_=t*r#4_t6s7zf8i7j(hq(ay=32wu^(z^bl2'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', '172.17.36.24']
 
 
 # Application definition
@@ -76,7 +75,7 @@ WSGI_APPLICATION = 'erp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.db.backends.sqlite3', 
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }

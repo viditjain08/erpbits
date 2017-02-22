@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import is_password_usable
 
 class slot(models.Model):
 
-    course = models.CharField(max_length=10, unique=True)
+    course = models.CharField(max_length=10)
     name = models.CharField(max_length=30)
     teacher = models.CharField(max_length=50)
     day = models.IntegerField()
@@ -18,7 +18,7 @@ class slot(models.Model):
             self.availableseats = self.totalseats
         super(slot, self).save()
     def __str__(self):
-        return u'%s %s' % (self.course, self.name)
+        return u'%s %s %s' % (self.course, self.name, self.teacher)
 
 class Erpuser(AbstractUser):
     semester = models.IntegerField(default=1)

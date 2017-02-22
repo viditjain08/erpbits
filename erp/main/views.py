@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login as authlogin, logout as auth
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from main.forms import loginform, adminsignupform
 from django.contrib.auth.decorators import login_required
-from main.models import Erpuser
+from main.models import Erpuser, slot
 import re, random
 # Create your views here.
 def login(request):
@@ -123,3 +123,65 @@ def prlist(request):
     for users in u:
         student[users.bitsid] = users.pr
     return render(request, 'pr2.html', {'student': student})
+
+@login_required(login_url='/login/')
+def timetable(request):
+    if request.method == 'POST':
+        id1 = request.POST['id']
+        s = slot.objects.get(pk=id1)
+        current_user = request.user
+        arr = []
+        l = []
+        l2= []
+        flag2 = 0
+        for x in current_user.timetable.split('\n'):
+            if x != '':
+                arr.append(int(x))
+        for i in arr:
+            s1 = slot.objects.get(pk=i)
+
+            if s.course == s1.course and s.stype == s1.stype:
+                flag2 = 1
+                break
+            
+            d1 = len(str(s1.day))
+            h1 = len(str(s1.hour))
+            for j in range(d1):
+                for k in range(h1):
+                    l2.append((int(str(s1.day)[0])+j, int(str(s1.hour)[0])+k))
+                    
+            d = len(str(s.day))
+            h = len(str(s.hour))
+            for j in range(d):
+                for k in range(h):
+                    l.append((int(str(s.day)[0])+j, int(str(s.hour)[0])+k))
+        flag = 0
+        for (x,y) in l2:
+            if (x,y) in l:
+                flag = 1
+                break
+        error = ''
+        if s.availableseats < 1:
+            error = 'No seats available'
+        elif s.pk in arr:
+            error = 'You have already selected this'
+        elif flag == 1:
+            error = "Teleportation isn't yet possible. You can't attend two classes at once"
+        elif flag2 == 1:
+            error = "Why are you trying to waste your time attending the same class again"
+        else:
+            s.availableseats = s.availableseats - 1
+            s.save()
+            if current_user.timetable == '':
+                current_user.timetable = str(s.pk)
+            else:
+                current_user.timetable = current_user.timetable + '\n' + str(s.pk)
+            current_user.save()
+        s1 = slot.objects.all()
+        return render(request, 'timetable.html', {'errors': error, 'slots': s1})
+    else:
+        s = slot.objects.all()
+        return render(request, 'timetable.html', {'slots': s})
+    
+
+

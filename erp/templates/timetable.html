@@ -1,0 +1,32 @@
+<html>
+<head>
+    <title>Main</title>
+</head>
+
+<body>
+Hello, {{ request.user.bitsid }}<br>
+{% load main_tags %}
+
+
+
+<ul>
+
+<li><a href='/prlist'>PR numbers</a></li>
+</ul>
+<a href="/logout/">Logout</a><br>
+<p style="color: red">
+{{ errors }}
+</p>
+{% for slot in slots %}
+
+    <form action="" method="post">
+<input type="hidden" value={{slot.pk}} name='id'>
+{{ slot.course }}---------{{ slot.teacher }}-----{{slot.day|day_name}}------{{slot.hour|hour_name}}<input type="submit" value="Add" name={{slot.pk}}>
+        {% csrf_token %}
+</form>
+
+<br>
+{% endfor %}
+
+</body>
+</html>
