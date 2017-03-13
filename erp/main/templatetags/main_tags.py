@@ -6,8 +6,12 @@ register = template.Library()
 
 @register.filter
 def day_name(day_number):
-    return calendar.day_name[day_number]
-
+    l = len(str(day_number))
+    s = str(day_number)
+    l1 = []
+    for i in range(l):
+        l1.append(calendar.day_name[int(s[i])])
+    return ' '.join(l1)
 @register.filter
 def hour_name(v):
     c = len(str(v))
@@ -22,3 +26,27 @@ def split(value):
         return (str(value-5)+':00pm -'+str(value-5)+':50pm')
     else:
         return value/10
+
+@register.filter
+def li(value):
+    l = len(str(value))
+    l1 = []
+    for i in range(l):
+       l1.append(str(value)[i])
+    return l1
+
+
+@register.filter
+def lookup(d, key1):
+    s = d[(int(str(key1)[0])*9)+int(str(key1)[1])-1]
+    return s
+
+@register.filter
+def addstr(a, b):
+    return str(a)+str(b)
+
+
+
+
+
+

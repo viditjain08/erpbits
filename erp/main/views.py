@@ -136,9 +136,9 @@ def timetable(request):
         flag2 = 0
         for x in current_user.timetable.split('\n'):
             if x != '':
-                arr.append(int(x))
+                arr.append(str(x))
         for i in arr:
-            s1 = slot.objects.get(pk=i)
+            s1 = slot.objects.get(pk=int(str(i)[2:]))
 
             if s.course == s1.course and s.stype == s1.stype:
                 flag2 = 1
@@ -148,13 +148,13 @@ def timetable(request):
             h1 = len(str(s1.hour))
             for j in range(d1):
                 for k in range(h1):
-                    l2.append((int(str(s1.day)[0])+j, int(str(s1.hour)[0])+k))
+                    l2.append((int(str(s1.day)[j]), int(str(s1.hour)[k])))
                     
             d = len(str(s.day))
             h = len(str(s.hour))
             for j in range(d):
                 for k in range(h):
-                    l.append((int(str(s.day)[0])+j, int(str(s.hour)[0])+k))
+                    l.append((int(str(s.day)[j]), int(str(s.hour)[k])))
         flag = 0
         for (x,y) in l2:
             if (x,y) in l:
@@ -163,7 +163,7 @@ def timetable(request):
         error = ''
         if s.availableseats < 1:
             error = 'No seats available'
-        elif s.pk in arr:
+        elif (str(s.pk) == str(i)[2:] for i in arr):
             error = 'You have already selected this'
         elif flag == 1:
             error = "Teleportation isn't yet possible. You can't attend two classes at once"
@@ -172,16 +172,63 @@ def timetable(request):
         else:
             s.availableseats = s.availableseats - 1
             s.save()
-            if current_user.timetable == '':
-                current_user.timetable = str(s.pk)
-            else:
-                current_user.timetable = current_user.timetable + '\n' + str(s.pk)
+            d = len(str(s.day))
+            h = len(str(s.hour))
+            for j in range(d):
+                for k in range(h):
+                    if current_user.timetable == '':
+                        current_user.timetable = str(s.day)[j] + str(s.hour)[k] + str(s.pk)
+                    else:
+                        current_user.timetable = current_user.timetable + '\n' + str(s.day)[j]+str(s.hour)[k]+str(s.pk)
             current_user.save()
+        l3 = []
+        l4 = []
+        for x in current_user.timetable.split('\n'):
+            if x:
+                l3.append(str(x))
+                l4.append(int(str(x)[2:]))
+        l3.sort()
+        timetable = []
+        for i in range(6):
+            for j in range(1,10):
+                flag = 0
+                for num in l3:
+                    if num[0] == str(i) and num[1] == str(j):
+                        flag = 1
+                        break
+                if flag == 1:
+                    timetable.append(slot.objects.get(pk=num[2:]))
+                else:
+                    timetable.append('')
+        l4 = set(l4)
+        l4 = list(l4)
         s1 = slot.objects.all()
-        return render(request, 'timetable.html', {'errors': error, 'slots': s1})
+        return render(request, 'timetable.html', {'errors': error, 'slots': s1, 'timetab': timetable, 'timeid': l4})
     else:
+        l3 = []
+        l4 = []
+        for x in request.user.timetable.split('\n'):
+            if x:
+                l3.append(str(x))
+                l4.append(int(str(x)[2:]))
+        l3.sort()
+        timetable = []
+        for i in range(6):
+            for j in range(1,10):
+                flag = 0
+                for num in l3:
+                    if num[0] == str(i) and num[1] == str(j):
+                        flag = 1
+                        break
+                if flag == 1:
+                    timetable.append(slot.objects.get(pk=num[2:]))
+                else:
+                    timetable.append('')
+
+        l4 = set(l4)
+        l4 = list(l4)
         s = slot.objects.all()
-        return render(request, 'timetable.html', {'slots': s})
+        return render(request, 'timetable.html', {'slots': s, 'timetab': timetable, 'timeid': l4})
     
 
 
