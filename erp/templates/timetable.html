@@ -25,15 +25,10 @@ Hello, {{ request.user.bitsid }}<br>
 <tr>
 <td align="center">{{ i|day_name }}
 {% for j in "123456789" %}
-<td>
-{% with i|addstr:j as template %}
-    {% with timetab|lookup:template as t %}
-    {{ t.course }} {{ t.stype }} <br>
-{{ t.teacher }}<br>
+<td>{% with i|addstr:j as template %} {% with timetab|lookup:template as t %} {{ t.course }} {{ t.stype }} <br> {{ t.teacher }}<br>
 {{t.room}}
     {% endwith %}
 {% endwith %}
-
 
 {% endfor %}
 </tr>
@@ -49,26 +44,60 @@ Hello, {{ request.user.bitsid }}<br>
 </ul>
 <a href="/logout/">Logout</a><br>
 <p style="color: red">
+
+
+
 {{ errors }}
+{% if perms.main.can_changett_pr and perms.main.can_changett_final %}
 </p>
 Courses Selected<br>
 {% for slot in slots %}
 {% if slot.pk in timeid %}
-{{ slot.course }}---------{{ slot.teacher }}-----{{slot.day|day_name}}------{{slot.hour|hour_name}}<br>
+    <form action="" method="post">
+{{ slot.course }}---------{{ slot.teacher }}-----{{slot.day|day_name}}------{{slot.hour|hour_name}}
+{% with 'del'|addstr:slot.pk as delname %}
+<input type="hidden" value={{delname}} name='id'>
+<input type="submit" value="Delete" name={{delname}}><br>
+        {% csrf_token %}
+</form>
+{% endwith %}
 {% endif %}
 {% endfor %}
 
 <br><br><br>
-{% for slot in slots %}
+
+
+
+{% regroup slots by name as name_list %}
+{% for name in name_list %}
+<H1><FONT COLOR="#333"><CENTER>{{ name.grouper }}</FONT></H1>
+
+{% regroup name.list by stype as stype_list %}
+{% for stype in stype_list %}
+<H1><FONT COLOR="#333"><CENTER>{{ stype.grouper }}</FONT></H1>
+{% for slot in stype.list %}
 
     <form action="" method="post">
 <input type="hidden" value={{slot.pk}} name='id'>
-{{ slot.course }}---------{{ slot.teacher }}------{{ slot.stype }}------{{slot.day|day_name}}------{{slot.hour|hour_name}}<input type="submit" value="Add" name={{slot.pk}}>
+{{ slot.course }}---------{{ slot.teacher }}------{{ slot.stype }}------{{slot.day|day_name}}------{{slot.hour|hour_name}}
+{% if slot.pk not in timeid %}
+<input type="submit" value="Add" name={{slot.pk}}><br>
+{% endif %}
+{% endfor %}
+        {% csrf_token %}
+</form>
+<br>
+{% endfor %}
+{% endfor %}
+
+
+    <form action="" method="post">
+<input type="hidden" value="finish" name='id'>
+<input type="submit" value="Finish Registration" name='finish_registration'><br>
         {% csrf_token %}
 </form>
 
-<br>
-{% endfor %}
 
+{% endif %}
 </body>
 </html>

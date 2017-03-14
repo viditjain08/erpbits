@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login as authlogin, logout as authlogout
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+import datetime
 from main.forms import loginform, adminsignupform
 from django.contrib.auth.decorators import login_required
 from main.models import Erpuser, slot
+from django.contrib.auth.models import Permission
 import re, random
 # Create your views here.
 def login(request):
@@ -77,6 +79,9 @@ def adminsignup(request):
                 us = Erpuser(first_name = firstname1, last_name = lastname1, username = username1, email=email1, bitsid = bitsid1, semester=sem2)
                 us.set_password(password1)
                 us.save()
+                permission = Permission.objects.get(codename='can_changett_final')
+                us.user_permissions.add(permission)
+
                 return render(request, 'signup2.html', {'user': username1, 'pass': password1})
             else:
                 return render(request, 'signup.html', {'form': form})
@@ -128,7 +133,26 @@ def prlist(request):
 def timetable(request):
     if request.method == 'POST':
         id1 = request.POST['id']
-        s = slot.objects.get(pk=id1)
+        delflag = 0
+        finalflag = 0
+        error = ''
+        if 'del' in id1:
+            delflag = 1
+            s = slot.objects.get(pk=int(str(id1)[3:]))
+        elif id1 == 'finish':
+            if checksub(request.user):
+                permission = Permission.objects.get(codename='can_changett_final')
+                request.user.user_permissions.remove(permission)
+            else:
+                error = 'You have not selected a compulsary subject/You have selected an extra subject'
+            timetable = []
+            l1 = []
+            l2 = []
+            timetable, l1, l2 = ret_timetable(request.user)
+            s = slot.objects.order_by("course", "stype")
+            return render(request, 'timetable.html', {'errors': error, 'slots': s, 'timetab': timetable, 'timeid': l2})
+        else:
+            s = slot.objects.get(pk=id1)
         current_user = request.user
         arr = []
         l = []
@@ -160,10 +184,20 @@ def timetable(request):
             if (x,y) in l:
                 flag = 1
                 break
-        error = ''
-        if s.availableseats < 1:
+
+        if delflag == 1:
+            timearr = []
+            for x in arr:
+                if int(x[2:]) != s.pk:
+                    timearr.append(str(x))
+                    
+            current_user.timetable = '\n'.join([str(x) for x in timearr])
+            current_user.save()
+            s.availableseats = s.availableseats + 1
+            s.save()
+        elif s.availableseats < 1:
             error = 'No seats available'
-        elif (str(s.pk) == str(i)[2:] for i in arr):
+        elif (s.pk in arr):
             error = 'You have already selected this'
         elif flag == 1:
             error = "Teleportation isn't yet possible. You can't attend two classes at once"
@@ -183,52 +217,85 @@ def timetable(request):
             current_user.save()
         l3 = []
         l4 = []
-        for x in current_user.timetable.split('\n'):
-            if x:
-                l3.append(str(x))
-                l4.append(int(str(x)[2:]))
-        l3.sort()
         timetable = []
-        for i in range(6):
-            for j in range(1,10):
-                flag = 0
-                for num in l3:
-                    if num[0] == str(i) and num[1] == str(j):
-                        flag = 1
-                        break
-                if flag == 1:
-                    timetable.append(slot.objects.get(pk=num[2:]))
-                else:
-                    timetable.append('')
-        l4 = set(l4)
-        l4 = list(l4)
-        s1 = slot.objects.all()
+        timetable, l3, l4 = ret_timetable(current_user)
+        s1 = slot.objects.order_by("course", "stype")
+        checkpr(current_user)
         return render(request, 'timetable.html', {'errors': error, 'slots': s1, 'timetab': timetable, 'timeid': l4})
     else:
         l3 = []
         l4 = []
-        for x in request.user.timetable.split('\n'):
-            if x:
-                l3.append(str(x))
-                l4.append(int(str(x)[2:]))
-        l3.sort()
         timetable = []
-        for i in range(6):
-            for j in range(1,10):
-                flag = 0
-                for num in l3:
-                    if num[0] == str(i) and num[1] == str(j):
-                        flag = 1
-                        break
-                if flag == 1:
-                    timetable.append(slot.objects.get(pk=num[2:]))
-                else:
-                    timetable.append('')
+        timetable, l3, l4 = ret_timetable(request.user)
 
-        l4 = set(l4)
-        l4 = list(l4)
-        s = slot.objects.all()
+        s = slot.objects.order_by("course", "stype")
+        checkpr(request.user)
         return render(request, 'timetable.html', {'slots': s, 'timetab': timetable, 'timeid': l4})
-    
 
+def ret_timetable(current_user):
+    l1 = []
+    l2 = []
+    for x in current_user.timetable.split('\n'):
+        if x:
+            l1.append(str(x))
+            l2.append(int(str(x)[2:]))
+    l1.sort()
+    timetable = []
+    for i in range(6):
+        for j in range(1,10):
+            flag = 0
+            for num in l1:
+                if num[0] == str(i) and num[1] == str(j):
+                    flag = 1
+                    break
+            if flag == 1:
+                timetable.append(slot.objects.get(pk=num[2:]))
+            else:
+                timetable.append('')
 
+        l2 = set(l2)
+        l2 = list(l2)
+    return timetable, l1, l2
+
+def checksub(current_user):
+    l1 = []
+    l2 = []
+    for x in current_user.timetable.split('\n'):
+        if x:
+            l1.append(int(str(x)[2:]))
+    l1 = set(l1)
+    l1 = list(l1)
+    l1.sort()
+    z = current_user.record
+    z1 = current_user.timetable
+    for y in current_user.record.split('\r\n'):
+        sloty = slot.objects.filter(course = y)
+        for s in sloty:
+            l2.append(s.pk)
+    l2 = set(l2)
+    l2 = list(l2)
+    l2.sort()
+    if l1 != l2:
+        return 0
+    else:
+        return 1
+
+def checkpr(current_user):
+    studentcount = Erpuser.objects.filter(is_superuser='False').count()
+    now = datetime.datetime.now()
+    permission = Permission.objects.get(codename='can_changett_pr')
+    if current_user.pr <= (studentcount/3):
+        if now.hour<9:
+            current_user.user_permissions.add(permission)
+        else:
+            current_user.user_permissions.remove(permission)
+    elif current_user.pr <= (2*studentcount/3):
+        if now.hour>8 and now.hour<17:
+            current_user.user_permissions.add(permission)
+        else:
+            current_user.user_permissions.remove(permission)
+    else:
+        if now.hour>16 and now.hour<=24:
+            current_user.user_permissions.add(permission)
+        else:
+            current_user.user_permissions.remove(permission)

@@ -32,4 +32,10 @@ class Erpuser(AbstractUser):
         if is_password_usable(password1) is False:
             self.set_password(password1)
         super(Erpuser, self).save(**kwargs)
+    class Meta:
+        permissions = (
+            ("can_changett_pr", "Can Change Timetable PR"),
+            ("can_changett_final", "Can Change Timetable Final"),
+
+        )
 
