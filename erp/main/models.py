@@ -6,13 +6,14 @@ class slot(models.Model):
 
     course = models.CharField(max_length=10)
     name = models.CharField(max_length=30)
-    teacher = models.CharField(max_length=50)
+    teacher = models.CharField(max_length=150)
     day = models.CharField(max_length=7)
     hour = models.IntegerField()
     totalseats = models.IntegerField()
     availableseats = models.IntegerField(default=0)
     stype = models.CharField(max_length=20)
     room = models.IntegerField()
+    sec = models.IntegerField()
     def save(self):
         if self.pk is None:
             self.availableseats = self.totalseats

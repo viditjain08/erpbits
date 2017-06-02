@@ -15,7 +15,10 @@ def day_name(day_number):
 @register.filter
 def hour_name(v):
     c = len(str(v))
-    return (str(datetime.timedelta(hours=int(str(v)[0])+7))+'-'+str(datetime.timedelta(hours=int(str(v)[0])+6+c, minutes=50)))
+    if v==0:
+        return ''
+    else:
+        return (str(datetime.timedelta(hours=int(str(v)[0])+7))+'-'+str(datetime.timedelta(hours=int(str(v)[0])+6+c, minutes=50)))
 @register.filter
 def split(value):
     if value < 5:
