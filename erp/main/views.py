@@ -206,7 +206,11 @@ def timetable(request):
         else:
             s.availableseats = s.availableseats - 1
             s.save()
-            d = len(str(s.day))
+            if s.day=='':
+                d=1
+                s.day=' '
+            else:
+                d = len(str(s.day))
             h = len(str(s.hour))
             for j in range(d):
                 for k in range(h):

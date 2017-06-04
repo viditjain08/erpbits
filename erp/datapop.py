@@ -16,11 +16,8 @@ flag = 0
 def dayhour(a,b):
 	daydict = {'M':'0','T':'1','W':'2','Th':'3','F':'4','S':'5'}
 	l1 = a.split()
-	day1 = daydict[l1[0]]
-	del l1[0]
 	d1 = h1 =''
-	for d in l1:
-		d1=str(d1)+daydict[d]
+	d1 = ''.join(daydict[abc] for abc in l1)
 	h1 = int(''.join(str(b).split()))
 	return d1, h1	
 for sh in sheetlist:
