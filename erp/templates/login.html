@@ -6,31 +6,30 @@
 <body>
     <h1>Login</h1>
 {% if status %}
-<p style="color: red;">
-{{status}}
+	<p style="color: red;">
+	{{status}}
 {% endif %}
-    {% if form.errors %}
-        <p style="color: red;">
+{% if form.errors %}
+	<p style="color: red;">
+	Please correct the error{{ form.errors|pluralize }} below.
+	</p>
+{% endif %}
 
-            Please correct the error{{ form.errors|pluralize }} below.
-        </p>
-    {% endif %}
+<form action="" method="post">
+	<div class="field">
+		{{ form.username.errors }}
+		<label for="id_username">Username:</label>
+		{{ form.username }}
+	</div>
+	<div class="field">
+		{{ form.password.errors }}
+		<label for="id_password">Password:</label>
+		{{ form.password }}
+	</div>
 
-    <form action="" method="post">
-        <div class="field">
-            {{ form.username.errors }}
-            <label for="id_username">Username:</label>
-            {{ form.username }}
-        </div>
-        <div class="field">
-            {{ form.password.errors }}
-            <label for="id_password">Password:</label>
-            {{ form.password }}
-        </div>
-
-        {% csrf_token %}
-        <input type="submit" value="Submit">
-    </form>
+	{% csrf_token %}
+	<input type="submit" value="Submit">
+</form>
 </body>
 </html>
 

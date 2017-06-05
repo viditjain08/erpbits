@@ -5,15 +5,15 @@
 
 <body>
 
-        {% if student %}           
-            <p>Found {{ student|length }} student{{ student|pluralize }}.</p>
-            <ul>               
-                {% for k,v in student.items %}               
-                <li>{{ k }} --> {{v}}</li>               
-                {% endfor %}           
-            </ul>       
-        {% else %}           
-            <p>No student</p>       
-        {% endif %}  
+	{% if student %}           
+		<p>Found {{ student|length }} student{{ student|pluralize }}.</p>
+		<ul>               
+		{% for k,v in student.items %}               
+			<li>{{ k }} --> {{v}}</li>               
+		{% endfor %}           
+		</ul>       
+	{% else %}           
+		<p>No student</p>       
+	{% endif %}  
 </body>
 </html>

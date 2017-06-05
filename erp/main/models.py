@@ -11,9 +11,9 @@ class slot(models.Model):
     hour = models.IntegerField()
     totalseats = models.IntegerField()
     availableseats = models.IntegerField(default=0)
-    stype = models.CharField(max_length=20)
+    stype = models.CharField(max_length=20)	# type of class i.e project, tutorial, etc.
     room = models.IntegerField()
-    sec = models.IntegerField()
+    sec = models.IntegerField()			# section number
     def save(self):
         if self.pk is None:
             self.availableseats = self.totalseats
@@ -26,8 +26,8 @@ class Erpuser(AbstractUser):
     bitsid = models.CharField(max_length=12, unique=True)
     cgpa = models.DecimalField(null=True, blank=True, max_digits=4, decimal_places=2)
     timetable = models.TextField(default='', blank=True)
-    record = models.TextField(default='', blank=True)
     pr = models.IntegerField(default=0)
+    availablecourses = models.ManyToManyField(slot)
     def save(self, **kwargs):
         password1 = self.password
         if is_password_usable(password1) is False:

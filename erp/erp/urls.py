@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^pr/$', pr),
     url(r'^prlist/$', prlist),
     url(r'^timetable/$', timetable),
+
 ]
