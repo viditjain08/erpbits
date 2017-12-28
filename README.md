@@ -9,6 +9,12 @@ Student portal for creating timetable according to randomly generated priority n
 5. Timetable display
 6. executing datapop.py will extract all the class slots from TIMETABLE.xlsx in media folder and save them in the database (openpyxl python module has to be downloaded to execute the file)
 
+# datapop.py
+datapop.py has two usages:
+`python datapop.py singlepage` for single page excel sheets as given in TIMETABLEII.xlsx
+`python datapop.py multipage` for multipage excel sheets given in TIMETABLE.xlsx
+giving no argument by default assumes single page.
+
 # Models
 1. slot
     * course -> Course code of subject (eg- CSF111)
