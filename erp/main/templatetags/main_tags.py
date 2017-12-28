@@ -49,7 +49,9 @@ def addstr(a, b):
     return str(a)+str(b)
 
 
-
+@register.filter
+def sp(a):
+    return a.split()
 
 
 

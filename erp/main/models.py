@@ -8,7 +8,7 @@ class slot(models.Model):
     name = models.CharField(max_length=30)
     teacher = models.CharField(max_length=150)
     day = models.CharField(max_length=7)
-    hour = models.IntegerField()
+    hour = models.CharField(max_length=30)
     totalseats = models.IntegerField()
     availableseats = models.IntegerField(default=0)
     stype = models.CharField(max_length=20)	# type of class i.e project, tutorial, etc.

@@ -1,6 +1,6 @@
 import openpyxl
 from main.models import slot
-wb = openpyxl.load_workbook('media/TIMETABLE.xlsx')
+wb = openpyxl.load_workbook('media/tt.xlsx')
 sheetlist = wb.get_sheet_names()
 c=-1
 course1 = ''
@@ -22,11 +22,17 @@ def dayhour(a,b):
 	return d1, h1	
 for sh in sheetlist:
 	sheet = wb.get_sheet_by_name(sh)
-	for l in range(2,29):
+	for l in range(2,1200):
 		c=c+1
 		print(c)
+		if sheet['H'+str(l)].value == None:
+			break
 
-		if sheet['B'+str(l)].value != None:
+		if str(sheet['A'+str(l)].value).split()[0]=="COM":
+			pass
+		elif str(sheet['K'+str(l)].value)!='None' and int(str(sheet['K'+str(l)].value).split()[0])>9:
+			pass
+		elif str(sheet['B'+str(l)].value) != 'None':
 			s = slot(totalseats=5,availableseats=5)
 			s.course = course1 = sheet['B'+str(l)].value
 			s.name = name1 = sheet['C'+str(l)].value
@@ -74,3 +80,4 @@ for sh in sheetlist:
 			s.room = room1 = int(sheet['I'+str(l)].value)
 			s.sec = sec1 = sheet['G'+str(l)].value
 			s.save()
+

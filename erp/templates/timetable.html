@@ -64,8 +64,7 @@ Courses Selected</h1><br>
 	{% endif %}
 	{% endfor %}
 <br><br><br>
-<!------------------------------------------------COURSE SELECTED ENDS------------------------------------------------------------------------->
-
+<!------------------------------------------------COURSE SELECTED ENDS-------------------------------------------------------------------------->
 {% if perms.main.can_changett_pr and perms.main.can_changett_final %}      <!-- Check if user is permitted to change timetable(pr or final)  -->
 <script>
 function f() {                                                            //  This function displays only the course selected
@@ -78,7 +77,7 @@ function f() {                                                            //  Th
 	{% endfor %}
 }
 </script>
-<!------------------------------------------------COURSE MENU BEGINS------------------------------------------------------------------------->
+<!------------------------------------------------COURSE MENU BEGINS-------------------------------------------------------------------------->
 {% regroup availablecourses by course as course_list %}
 <div align="center">
 	<select id="mySelect" onchange="f()" style="align:'center'">
@@ -87,8 +86,8 @@ function f() {                                                            //  Th
 	{% endfor %}
 	</select>
 </div>
-<!------------------------------------------------COURSE MENU ENDS------------------------------------------------------------------------->
-<!------------------------------------------------COURSE TIMINGS BEGINS--------------------------------------------------------------------->
+<!------------------------------------------------COURSE MENU ENDS-------------------------------------------------------------------------->
+<!------------------------------------------------COURSE TIMINGS BEGINS---------------------------------------------------------------------->
 {% for course in course_list %}
 	<div id="{{course.grouper}}" style="display:none">
 	<H1>
@@ -100,14 +99,12 @@ function f() {                                                            //  Th
 		<FONT COLOR="#333"><CENTER>{{ stype.grouper }}</FONT>
 		</H1>
 		{% for slot in stype.list %}
-
 			<form action="" method="post">
 				<input type="hidden" value={{slot.pk}} name='id'>
 				{{ slot.course }}---------{{slot.name}}---------{{ slot.teacher }}------{{ slot.stype }}------{{slot.day|day_name}}------{{slot.hour|hour_name}}
 				{% if slot.pk not in timeid %}
 					<input type="submit" value="Add" name={{slot.pk}}><br>
 				{% endif %}
-
         			{% csrf_token %}
 			</form>
 		{% endfor %}
@@ -115,7 +112,7 @@ function f() {                                                            //  Th
 	{% endfor %}
 	</div>
 {% endfor %}
-<!------------------------------------------------COURSE TIMINGS ENDS--------------------------------------------------------------------->
+<!------------------------------------------------COURSE TIMINGS ENDS---------------------------------------------------------------------->
 <script>									
 {% for course in course_list %} 							// 1st course to be displayed
 	{% if forloop.first %}
