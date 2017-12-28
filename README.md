@@ -1,6 +1,16 @@
 # BITS ERP portal
 Student portal for creating timetable according to randomly generated priority numbers
 
+#Installation
+1. Delete database
+2. python manage.py makemigrations
+3. python manage.py migrate
+4. python manage.py migrate --run-syncdb
+5. python manage.py createsuperuser
+6. python manage.py shell < datapop.py
+7. python manage.py runserver
+
+
 # Features
 1. Student registration by admin(superuser) only
 2. Admin generates the PR numbers which determine the time slot for student timetable registration
