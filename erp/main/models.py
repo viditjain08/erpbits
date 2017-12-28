@@ -23,7 +23,7 @@ class slot(models.Model):
 
 class Erpuser(AbstractUser):
     semester = models.IntegerField(default=1)
-    bitsid = models.CharField(max_length=12, unique=True)
+    bitsid = models.CharField(max_length=12, unique=True, default='')
     cgpa = models.DecimalField(null=True, blank=True, max_digits=4, decimal_places=2)
     timetable = models.TextField(default='', blank=True)
     pr = models.IntegerField(default=0)
